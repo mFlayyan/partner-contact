@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 # Copyright (C) 2014-2015  Grupo ESOC <www.grupoesoc.es>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
+from datetime import datetime
 from odoo import api, fields, models
+from odoo.tools import DEFAULT_SERVER_DATE_FORMAT as DATE_FORMAT
 import logging
 
 
@@ -30,4 +32,6 @@ class ResPartner(models.Model):
     @api.one
     def _birthdate_inverse(self):
         """Convert the old Char date to the new Date format."""
-        self.birthdate_date = self.birthdate
+        date_format = self.env['res.lang']._lang_get(
+            self.env.lang).date_format or DATE_FORMAT
+        self.birthdate_date = datetime.strptime(self.birthdate, date_format)
